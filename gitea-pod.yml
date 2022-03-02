@@ -1,0 +1,126 @@
+# Generation of Kubernetes YAML is still under development!
+#
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-3.2.1
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2022-03-02T10:11:21Z"
+  labels:
+    app: gitea
+  name: gitea
+spec:
+  containers:
+  - args:
+    - /bin/s6-svscan
+    - /etc/s6
+    command:
+    - /usr/bin/entrypoint
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: USER_ID
+      value: "1000"
+    - name: USER_GID
+      value: "1000"
+    - name: DB_TYPE
+      value: postgres
+    - name: DB_HOST
+      value: localhost:5432
+    - name: DB_USER
+      value: gitea
+    - name: USER
+      value: git
+    - name: GITEA_CUSTOM
+      value: /data/gitea
+    - name: DB_NAME
+      value: gitea
+    - name: DB_PASSWD
+      value: gitea
+    image: docker.io/gitea/gitea:1.13.2
+    name: giteasrv
+    ports:
+    - containerPort: 3000
+      hostPort: 3000
+      protocol: TCP
+    - containerPort: 22
+      hostPort: 2221
+      protocol: TCP
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    volumeMounts:
+    - mountPath: /data
+      name: srv-gitea-host-0
+    workingDir: /
+  - args:
+    - postgres
+    command:
+    - docker-entrypoint.sh
+    env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/9.6/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: POSTGRES_PASSWORD
+      value: gitea
+    - name: LANG
+      value: en_US.utf8
+    - name: PG_MAJOR
+      value: "9.6"
+    - name: GOSU_VERSION
+      value: "1.14"
+    - name: POSTGRES_DB
+      value: gitea
+    - name: PG_VERSION
+      value: 9.6.24-1.pgdg90+1
+    - name: PGDATA
+      value: /var/lib/postgresql/data
+    - name: POSTGRES_USER
+      value: gite
+    image: docker.io/library/postgres:9.6
+    name: giteadb
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+    volumeMounts:
+    - mountPath: /var/lib/postgresql/data
+      name: srv-postgres-host-0
+    workingDir: /
+  dnsConfig: {}
+  restartPolicy: Never
+  volumes:
+  - hostPath:
+      path: /srv/gitea
+      type: Directory
+    name: srv-gitea-host-0
+  - hostPath:
+      path: /srv/postgres
+      type: Directory
+    name: srv-postgres-host-0
+status: {}
+
