@@ -1,0 +1,13 @@
+[Unit]
+Description=Gitea repository and database
+After=network-online.target
+
+[Service]
+Type=simple
+Restart=always
+User=ubuntu
+Group=ubuntu
+ExecStart=podman play kube /usr/lib/timt/gitea-pod.yml
+
+[Install]
+WantedBy=multi-user.target
