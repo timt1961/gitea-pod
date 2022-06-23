@@ -1,8 +1,29 @@
-#! /bin/sh
+#! /bin/bash
+
+set -euo pipefail
+
+# Create gitea pod
 
 podman pod create --name gitea -p3000:3000 -p 2221:22
 
-podman run -d --pod gitea --name gitea_srv -e USER_ID=1000 -e USER_GID=1000 -e DB_TYPE=postgres -e DB_HOST=localhost:5432 -e DB_NAME=gitea -e DB_PASSWD=gitea -e DB_USER=gitea -v /srv/gitea:/data docker.io/gitea/gitea:1.13.2
-podman run -d --pod gitea --name gitea_db -e POSTGRES_PASSWORD=gitea -e POSTGRES_USER=gite -e POSTGRES_DB=gitea -v /srv/postgres:/var/lib/postgresql/data docker.io/library/postgres:9.6
+# Add the gite container to the pod
+podman run -d --pod gitea --name gitea_srv \
+       	-e USER_ID=1000 \
+       	-e USER_GID=1000 \
+       	-e DB_TYPE=postgres \
+       	-e DB_HOST=localhost:5432\
+       	-e DB_NAME=gitea \
+       	-e DB_PASSWD=gitea \
+	-e DB_USER=gitea \
+	-v /srv/gitea:/data \
+       	docker.io/gitea/gitea:1.13.2
+
+# Add the postgres pod
+podman run -d --pod gitea --name gitea_db \
+       	-e POSTGRES_PASSWORD=gitea \
+       	-e POSTGRES_USER=gitea \
+       	-e POSTGRES_DB=gitea \
+       	-v /srv/postgres:/var/lib/postgresql/data \
+       	docker.io/library/postgres:9.6
 
 
