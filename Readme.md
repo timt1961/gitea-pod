@@ -1,5 +1,11 @@
 # Running gitea in a podman pod
 
+## Update 2025-07-23
+Podman is not supported on the platforms I use these days, so I built a new docker-compose.yml. 
+
+This docker-compose.yml does not use docker volumes, because I really need the files to be in a specific location on the disc. 
+
+
 ## Introduction
 
   There is a lot of literature about how to run gitea from a docker compose file. 
